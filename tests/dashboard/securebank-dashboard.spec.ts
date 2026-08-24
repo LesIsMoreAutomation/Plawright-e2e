@@ -1,5 +1,7 @@
 import { test, expect } from '../../helpers/helpers/fixtures';
 
+const DASHBOARD_STAT_LABELS = ['Total Net Worth', 'Net Change', 'Income', 'Expenses'];
+const QUICK_ACTION_LABELS = ['Transfer Money', 'Send Money', 'Pay a Bill', 'Apply for Loan', 'Transactions'];
 
 test.describe('SecureBank - Dashboard', () => {
 
@@ -11,25 +13,20 @@ test.describe('SecureBank - Dashboard', () => {
         const statCards = ui.getByTestId('dashboard-stat-cards');
 
         await expect(statCards).toBeVisible();
-        await expect(statCards).toContainText('Total Net Worth');
-        await expect(statCards).toContainText('Net Change');
-        await expect(statCards).toContainText('Income');
-        await expect(statCards).toContainText('Expenses');
+        for (const label of DASHBOARD_STAT_LABELS) {
+            await ui.expectVisibleByTestIdtoContainText('dashboard-stat-cards', label);
+        }
 
     });
 
     test('TC05 - Quick Actions section shows all action cards', async ({ loginPageSession }) => {
         const ui = loginPageSession;
         const quickActionsSection = ui.getByTestId('quick-actions-section');
-
         await expect(quickActionsSection).toBeVisible();
         await expect(quickActionsSection.getByRole('heading', { name: 'Quick Actions' })).toBeVisible();
-
-        await expect(quickActionsSection).toContainText('Transfer Money');
-        await expect(quickActionsSection).toContainText('Send Money');
-        await expect(quickActionsSection).toContainText('Pay a Bill');
-        await expect(quickActionsSection).toContainText('Apply for Loan');
-        await expect(quickActionsSection).toContainText('Transactions');
+        for (const actionLabel of QUICK_ACTION_LABELS) {
+            await ui.expectVisibleByTestIdtoContainText('quick-actions-section', actionLabel);
+        }
     });
 
 });

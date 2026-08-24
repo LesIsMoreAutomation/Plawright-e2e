@@ -11,6 +11,7 @@ export class LoginPage {
 
     async goto(): Promise<void> {
         await this.page.goto(urls.baseURL);
+        await this.page.waitForLoadState('networkidle',{ timeout: 60000 });
     }
 
     async login(username: string, password: string): Promise<void> {

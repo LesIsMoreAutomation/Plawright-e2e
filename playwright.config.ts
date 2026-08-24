@@ -22,6 +22,8 @@ const projects = (() => {
  */
 export default defineConfig({
   testDir: './tests',
+  /* Directory where screenshots, traces, and videos will be saved under test-case names */
+  outputDir: 'test-results',
   timeout: 60 * 1000,
   globalTimeout: 60 * 60 * 1000,
   /* Run tests in files in parallel */
@@ -40,7 +42,7 @@ export default defineConfig({
     // Added Monocart Reporter configuration below
     ['monocart-reporter', {
       name: 'Automation Execution Report',
-      outputFile: './monocart-report/report.html'
+      outputFile: './monocart-report/report.html',
     }]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -48,6 +50,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: urls.baseURL,
 
+    /* Limit each Playwright action to 2500ms. */
+    actionTimeout: 2500,
+    navigationTimeout: 30000,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
