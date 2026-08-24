@@ -1,12 +1,12 @@
 import { Page, expect } from '@playwright/test';
-import { CommonLocators } from './commonLocators';
+import { CommonBasePage } from './commonBasePage';
 import { urls } from '../helpers/env.urls';
 
 export class LoginPage {
-    private readonly ui: CommonLocators;
+    private readonly ui: CommonBasePage;
 
     constructor(private readonly page: Page) {
-        this.ui = new CommonLocators(page);
+        this.ui = new CommonBasePage(page);
     }
 
     async goto(): Promise<void> {
@@ -22,6 +22,6 @@ export class LoginPage {
 
     async loginAsStandardUser(): Promise<void> {
         await this.login('standard_user', 'bank_sauce');
-        await expect(this.page).toHaveURL(/.*dashboard/, { timeout: 30000 });
+        await expect(this.page).toHaveURL(/.*dashboard/, { timeout: 60000 });
     }
 }

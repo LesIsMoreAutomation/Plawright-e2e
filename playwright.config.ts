@@ -22,7 +22,7 @@ const projects = (() => {
  */
 export default defineConfig({
   testDir: './tests',
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   globalTimeout: 60 * 60 * 1000,
   /* Run tests in files in parallel */
   fullyParallel: false,

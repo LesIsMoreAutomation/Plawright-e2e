@@ -1,21 +1,12 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import { CommonLocators } from '../../pages/commonLocators';
+import { test, expect } from '../../helpers/helpers/fixtures';
+
 
 // Define page object variables in the file scope so both tests can read them
-let loginPage: LoginPage;
-let ui: CommonLocators;
 
-test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    ui = new CommonLocators(page);
-    await loginPage.loginAsStandardUser();
+test('Verify that account balances are non-negative numbers', async ({ loginPageSession }) => {
+    const ui = loginPageSession;
     await ui.clickByTestId('sidebar-link-accounts'); // Clicks the active 'Accounts' menu option
     await expect(ui.getByRole('heading', 'My Accounts' )).toBeVisible();
-});
-
-test('Verify that account balances are non-negative numbers', async () => {
-
     await ui.getByTestId('view-account-btn').first().click();
     const checkingBalanceText = await ui.getByTestId('account-detail-balance').innerText();
     const checkingBalance = parseFloat(checkingBalanceText.replace(/[^0-9.-]+/g, ''));
@@ -29,7 +20,10 @@ test('Verify that account balances are non-negative numbers', async () => {
     expect(savingsBalance).toBeGreaterThanOrEqual(0);
 });
 
-test('Add Account new account and delete it after creation', async () => {
+test('Add Account new account and delete it after creation', async ({ loginPageSession }) => {
+    const ui = loginPageSession;
+    await ui.clickByTestId('sidebar-link-accounts'); // Clicks the active 'Accounts' menu option
+    await expect(ui.getByRole('heading', 'My Accounts' )).toBeVisible();
     await ui.getByRole('button', 'Add Account' ).click();
     await ui.fillByRole('textbox', 'Account Name', 'New Savings Account');
     await ui.getByRole('combobox', 'Account Type').click();

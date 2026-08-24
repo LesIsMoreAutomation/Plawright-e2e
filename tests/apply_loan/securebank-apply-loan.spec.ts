@@ -1,20 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import { CommonLocators } from '../../pages/commonLocators';
+import { test, expect } from '../../helpers/helpers/fixtures';
 
 test.describe('SecureBank - Apply Loan', () => {
 
-    test.beforeEach(async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const ui = new CommonLocators(page);
-
-        await loginPage.loginAsStandardUser();
+    test('TC07 - Loan dialog shows required fields and actions', async ({ loginPageSession }) => {
+        const ui = loginPageSession;
         await ui.clickByTestId('quick-action-apply-loan');
         await ui.getByRole('heading', 'Apply for a Loan').isVisible();
-    });
-
-    test('TC07 - Loan dialog shows required fields and actions', async ({ page }) => {
-        const ui = new CommonLocators(page);
         await ui.clickByRole('button', 'Apply for Loan');
         await ui.clickByRole('combobox','Loan Type');
         await ui.getByRole('option', 'Personal').click();

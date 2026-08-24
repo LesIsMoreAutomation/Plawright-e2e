@@ -1,12 +1,7 @@
-import {test} from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import {CommonLocators} from "../../pages/commonLocators";
+import { test, expect } from '../../helpers/helpers/fixtures';
 
-test('Pay utilities and services', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    const ui = new CommonLocators(page);
-
-    await loginPage.loginAsStandardUser();
+test('Pay utilities and services', async ({ loginPageSession }) => {
+    const ui = loginPageSession;
     await ui.clickByTestId('quick-action-bill-pay')
     await ui.clickByTestId('bill-pay-from-select');
     await ui.clickByRole('option', 'Everyday Checking — $');

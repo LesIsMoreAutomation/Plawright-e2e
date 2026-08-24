@@ -2,7 +2,7 @@ import {Page, Locator, expect} from '@playwright/test';
 
 type AriaRole = Parameters<Page['getByRole']>[0];
 
-export class CommonLocators {
+export class CommonBasePage {
     constructor(private readonly page: Page) {}
 
     // ── Locator factory ──────────────────────────────────────────────────────

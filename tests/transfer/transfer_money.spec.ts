@@ -1,14 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import { CommonLocators } from '../../pages/commonLocators';
+import { test, expect } from '../../helpers/helpers/fixtures';
 
-test('Testing transfer money section', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const ui = new CommonLocators(page);
+test('Testing transfer money section', async ({ loginPageSession }) => {
+    const ui = loginPageSession;
 
-    // 1. Authenticate and navigate to the Transfer section
-    await loginPage.loginAsStandardUser();
-    await ui.clickByTestId('sidebar-link-transfer'); // Click the active 'Transfer' menu option
+    await ui.clickByTestId('sidebar-link-transfer'); // Click th
     await ui.getByRole('heading', 'Transfer Money').isVisible();
 
     // 2. Select originating account
@@ -28,10 +23,8 @@ test('Testing transfer money section', async ({ page }) => {
     // 5. Select Transfer Date (Defaults to Today radio button)
     await expect(ui.getByRole('radio', 'Today')).toBeChecked();
 
-    // 6. Review and confirm the internal transfer
     await ui.clickByTestId('review-transfer-btn'); // Clicks 'Review Transfer' button
 
-    // 7. Verify confirmation dialog and transaction values
     await ui.expectVisibleByTestId('transfer-confirm-dialog');
     await ui.getByRole('heading', 'Confirm Transfer').isVisible();
     await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', 'High-Yield Savings');
@@ -40,7 +33,6 @@ test('Testing transfer money section', async ({ page }) => {
     await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', 'Moving savings to checking');
     await ui.getByRole('button', 'Confirm Transfer').click();
 
-// 8. UPDATED: Assert exact screen elements from Success Screenshot
     await ui.expectTextToVisible('Transfer Successful');
     await ui.expectTextToVisible('Your funds have been moved.');
 

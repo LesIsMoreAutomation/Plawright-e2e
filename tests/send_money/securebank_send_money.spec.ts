@@ -1,13 +1,8 @@
-import {test, expect, Locator} from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import {CommonLocators} from "../../pages/commonLocators";
+import { test, expect } from '../../helpers/helpers/fixtures';
 
 
-test('Testing send money section', async ({page}) => {
-    const loginPage = new LoginPage(page);
-    const ui = new CommonLocators(page);
-
-    await loginPage.loginAsStandardUser();
+test('Testing send money section', async ({ loginPageSession }) => {
+    const ui = loginPageSession;
     await ui.clickByTestId('quick-action-send-money');
     await ui.getByRole('heading', 'Send Money').isVisible();
 
