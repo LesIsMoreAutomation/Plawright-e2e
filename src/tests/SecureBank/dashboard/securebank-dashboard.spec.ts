@@ -1,4 +1,4 @@
-import { test, expect } from '../../helpers/helpers/fixtures';
+import { test, expect } from '@fixtures/fixtures';
 
 const DASHBOARD_STAT_LABELS = ['Total Net Worth', 'Net Change', 'Income', 'Expenses'];
 const QUICK_ACTION_LABELS = ['Transfer Money', 'Send Money', 'Pay a Bill', 'Apply for Loan', 'Transactions'];
@@ -6,8 +6,7 @@ const QUICK_ACTION_LABELS = ['Transfer Money', 'Send Money', 'Pay a Bill', 'Appl
 test.describe('SecureBank - Dashboard', () => {
 
 
-    test('TC04 - Dashboard summary cards are visible with expected values', async ({ loginPageSession }) => {
-        const ui = loginPageSession;
+    test('TC04 - Dashboard summary cards are visible with expected values', async ({ loginPageSession: ui }) => {
 
         await ui.expectVisible('heading', 'Welcome back');
         const statCards = ui.getByTestId('dashboard-stat-cards');
@@ -19,8 +18,7 @@ test.describe('SecureBank - Dashboard', () => {
 
     });
 
-    test('TC05 - Quick Actions section shows all action cards', async ({ loginPageSession }) => {
-        const ui = loginPageSession;
+    test('TC05 - Quick Actions section shows all action cards', async ({ loginPageSession: ui }) => {
         const quickActionsSection = ui.getByTestId('quick-actions-section');
         await expect(quickActionsSection).toBeVisible();
         await expect(quickActionsSection.getByRole('heading', { name: 'Quick Actions' })).toBeVisible();

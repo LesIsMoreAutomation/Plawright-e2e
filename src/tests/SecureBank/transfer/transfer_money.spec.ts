@@ -1,7 +1,7 @@
-import { test, expect } from '../../helpers/helpers/fixtures';
+import { test, expect } from '@fixtures/fixtures';
+import data from "@test-data/loanData.json";
 
-test('Testing transfer money section', async ({ loginPageSession }) => {
-    const ui = loginPageSession;
+test('Testing transfer money section', async ({ loginPageSession: ui }) => {
 
     await ui.clickByTestId('sidebar-link-transfer'); // Click th
     await ui.getByRole('heading', 'Transfer Money').isVisible();
@@ -9,7 +9,7 @@ test('Testing transfer money section', async ({ loginPageSession }) => {
     // 2. Select originating account
     await ui.clickByTestId('transfer-from-select');
     await expect(ui.getByRole('option', 'Everyday Checking — $' )).toBeVisible();
-    await ui.clickByRole('option', 'High-Yield Savings — $' );
+    await ui.clickByRole('option', data.validData.savings );
 
     // 3. Select destination account
     await ui.clickByTestId('transfer-to-select'); // 'Select account' dropdown under From Account
@@ -27,7 +27,7 @@ test('Testing transfer money section', async ({ loginPageSession }) => {
 
     await ui.expectVisibleByTestId('transfer-confirm-dialog');
     await ui.getByRole('heading', 'Confirm Transfer').isVisible();
-    await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', 'High-Yield Savings');
+    await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', data.validData.savings);
     await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', 'Everyday Checking');
     await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', '$500.00');
     await ui.expectVisibleByTestIdtoContainText('transfer-confirm-summary', 'Moving savings to checking');
@@ -41,7 +41,7 @@ test('Testing transfer money section', async ({ loginPageSession }) => {
     await ui.assertRefNumberContainsTodayDate(ui.getByTestId('transfer-ref-id'));
 
     // Validate the complete summary grid block
-    await ui.expectVisibleByTestIdtoContainText('confirm-from-account', 'High-Yield Savings');
+    await ui.expectVisibleByTestIdtoContainText('confirm-from-account', data.validData.savings);
     await ui.expectVisibleByTestIdtoContainText('confirm-to-account', 'Everyday Checking');
     await ui.expectVisibleByTestIdtoContainText('confirm-amount', '$500.00');
     await ui.assertRefNumberContainsTodayDate(ui.getByTestId('confirm-date'));

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,               /* Allows importing .json files directly */
+    "esModuleInterop": true,
+    "strict": true,
+
+    /* Path Mapping Setup */
+    "baseUrl": ".",                          /* Root directory of your project */
+    "paths": {
+      "@test-data/*": ["src/test-data/*"],   /* Maps the data directory alias */
+      "@fixtures/*": ["src/fixtures/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@pages/*": ["src/pages/*"]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
-import { LoginPage } from '../../pages/loginPage';
-import { CommonBasePage } from '../../pages/commonBasePage';
+import { LoginPage } from '@pages/loginPage';
+import { CommonBasePage } from '@pages/commonBasePage';
 
 type MyFixtures = {
     loginPageSession: CommonBasePage;

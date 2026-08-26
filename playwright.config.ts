@@ -1,17 +1,27 @@
 import { defineConfig, devices } from '@playwright/test';
-import { runtime, urls } from './helpers/env.urls';
+import { runtime, urls } from '@helpers/env.urls';
 
 const projects = (() => {
-  if (runtime.browserTarget === 'chromium') {
+  const browserTarget = String(runtime.browserTarget).toLowerCase();
+
+  // // If a specific mobile device targeting logic is needed, intercept it here
+  // if (browserTarget === 'iphone14pro' || browserTarget === 'iphone14') {
+  //   return [{ name: 'iphone14pro', use: { ...devices['iPhone 14 Pro'] } }];
+  // }
+  // if (browserTarget === 'android' || browserTarget === 'android') {
+  //   return [{ name: 'android', use: { ...devices['Pixel 7'] } }];
+  // }
+
+  if (browserTarget === 'chromium') {
     return [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }];
   }
-  if (runtime.browserTarget === 'chrome') {
+  if (browserTarget === 'chrome') {
     return [{ name: 'chrome', use: { ...devices['Desktop Chrome'], channel: 'chrome' } }];
   }
-  if (runtime.browserTarget === 'msedge') {
+  if (browserTarget === 'msedge') {
     return [{ name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } }];
   }
-  if (runtime.browserTarget === 'firefox') {
+  if (browserTarget === 'firefox') {
     return [{ name: 'firefox', use: { ...devices['Desktop Firefox'] } }];
   }
   return [{ name: 'webkit', use: { ...devices['Desktop Safari'] } }];
@@ -21,7 +31,7 @@ const projects = (() => {
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: 'src/tests',
   /* Directory where screenshots, traces, and videos will be saved under test-case names */
   outputDir: 'test-results',
   timeout: 60 * 1000,
@@ -36,10 +46,11 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['list', { printSteps: true, outputFile: 'test-results/output.txt' }],
+    // FIX: Removed 'outputFile' as the native 'list' reporter prints strictly to stdout and does not support file output
+    ['list', { printSteps: true }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
-    // Added Monocart Reporter configuration below
+    // Monocart Reporter configuration
     ['monocart-reporter', {
       name: 'Automation Execution Report',
       outputFile: './monocart-report/report.html',
@@ -66,21 +77,4 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects,
-
-  /* Test against mobile viewports. */
-  // {
-  //   name: 'Mobile Chrome',
-  //   use: { ...devices['Pixel 5'] },
-  // },
-  // {
-  //   name: 'Mobile Safari',
-  //   use: { ...devices['iPhone 12'] },
-  // },
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });

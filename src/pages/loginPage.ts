@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { CommonBasePage } from './commonBasePage';
-import { urls } from '../helpers/env.urls';
+import { urls } from '@helpers/env.urls';
 
 export class LoginPage {
     private readonly ui: CommonBasePage;

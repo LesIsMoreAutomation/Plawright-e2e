@@ -1,15 +1,16 @@
-import { test, expect } from '../../helpers/helpers/fixtures';
+import { test } from '@fixtures/fixtures';
+import data from '@test-data/loanData.json'
 
-test('Pay utilities and services', async ({ loginPageSession }) => {
-    const ui = loginPageSession;
+
+test('Pay utilities and services @desktop', async ({ loginPageSession: ui }) => {
     await ui.clickByTestId('quick-action-bill-pay')
     await ui.clickByTestId('bill-pay-from-select');
-    await ui.clickByRole('option', 'Everyday Checking — $');
+    await ui.clickByRole('option', data.validData.cheque);
     await ui.clickByTestId('biller-search-input');
     await ui.clickByRole('option', 'Metro Water Utility Ref: ACC-');
     await ui.expectVisibleByTestIdtoContainText('biller-selected-summary', 'Metro Water Utility');
     await ui.clickByTestId('bill-amount-input');
-    await ui.fillByTestId('bill-amount-input', '150');
+    await ui.fillByTestId('bill-amount-input', data.validData.smallAmount);
     await ui.clickByTestId('bill-memo-input');
     await ui.fillByTestId('bill-memo-input', 'Pay bill');
     await ui.clickByTestId('review-bill-btn');
