@@ -1,12 +1,12 @@
 import { Page, expect } from '@playwright/test';
-import { CommonBasePage } from './commonBasePage';
+import { Base_page } from './base_page';
 import { urls } from '@helpers/env.urls';
 
-export class LoginPage {
-    private readonly ui: CommonBasePage;
+export class Login_page {
+    private readonly ui: Base_page;
 
     constructor(private readonly page: Page) {
-        this.ui = new CommonBasePage(page);
+        this.ui = new Base_page(page);
     }
 
     async goto(): Promise<void> {

@@ -1,26 +1,26 @@
 import { test, expect } from '@fixtures/fixtures';
-import data from "@test-data/loanData.json";
+import data from "../../../test_data/data.json";
 
 test('Testing transfer money section', async ({ loginPageSession: ui }) => {
 
     await ui.clickByTestId('sidebar-link-transfer'); // Click th
     await ui.getByRole('heading', 'Transfer Money').isVisible();
 
-    // 2. Select originating account
+    // Select originating account
     await ui.clickByTestId('transfer-from-select');
     await expect(ui.getByRole('option', 'Everyday Checking — $' )).toBeVisible();
     await ui.clickByRole('option', data.validData.savings );
 
-    // 3. Select destination account
+    // Select destination account
     await ui.clickByTestId('transfer-to-select'); // 'Select account' dropdown under From Account
     await ui.clickByRole('option', 'Everyday Checking — $' );
 
-    // 4. Enter amount and optional memo details
+    // Enter amount and optional memo details
     await ui.fillByTestId('transfer-amount-input', '500'); // Fills the Amount field ($ 0.00)
 
     await ui.fillByRole('textbox', 'e.g. Rent, vacation fund…','Moving savings to checking'); // Fills Memo (optional)
 
-    // 5. Select Transfer Date (Defaults to Today radio button)
+    // Select Transfer Date (Defaults to Today radio button)
     await expect(ui.getByRole('radio', 'Today')).toBeChecked();
 
     await ui.clickByTestId('review-transfer-btn'); // Clicks 'Review Transfer' button

@@ -1,5 +1,5 @@
 import { test } from '@fixtures/fixtures';
-import data from '@test-data/loanData.json'
+import data from '../../../test_data/data.json'
 
 
 test('Pay utilities and services @desktop', async ({ loginPageSession: ui }) => {

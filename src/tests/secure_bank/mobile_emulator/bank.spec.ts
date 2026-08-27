@@ -1,6 +1,6 @@
 import { test } from '@fixtures/fixtures';
-import { BankPage } from '@pages/BankPage.';
-import data from "@test-data/loanData.json";
+import { Bank_page } from '@pages/bank_page.';
+import data from "../../../test_data/data.json";
 import {devices} from "@playwright/test";
 
 // Playwright will execute this exact test 3 times automatically
@@ -11,13 +11,13 @@ test.use({
 });
 
 
-test('Send money transactional execution workflow', async ({ loginPageSession, page }) => {
-    const bankPage = new BankPage(page);
+test('Send money transactional execution workflow', async ({ page }) => {
+    const bankPage = new Bank_page(page);
 
-    // 1. Verify dashboard landing state
+    // Verify dashboard landing state
     await bankPage.verifyDashboardLanding();
 
-    // 2. Perform the transactional workflow
+    // Perform the transactional workflow
     await bankPage.initiateTransfer(data.validData.amount, data.validData.note);
     await bankPage.verifySummaryAndSubmit(
         data.validData.accountName,
@@ -26,7 +26,7 @@ test('Send money transactional execution workflow', async ({ loginPageSession, p
         data.validData.note
     );
 
-    // 3. Confirm completion
+    // Confirm completion
     await bankPage.verifySuccessState();
 });
 

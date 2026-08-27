@@ -1,5 +1,5 @@
 import { test, expect } from '@fixtures/fixtures';
-import data from '@test-data/loanData.json';
+import data from '../../../test_data/data.json';
 
 
 test('Testing send money section', async ({ loginPageSession: ui }) => {

@@ -1,10 +1,10 @@
 import { type Page } from '@playwright/test';
-import { CommonBasePage } from './commonBasePage';
-import data from "@test-data/loanData.json"; // Adjust this import path as necessary
+import { Base_page } from './base_page';
+import data from "../test_data/data.json"; // Adjust this import path as necessary
 
-export class BankPage extends CommonBasePage {
+export class Bank_page extends Base_page {
     constructor(page: Page) {
-        // Pass the Playwright page instance to the parent CommonBasePage constructor
+        // Pass the Playwright page instance to the parent Base_page constructor
         super(page);
     }
 
