@@ -30,39 +30,11 @@ export class Base_page {
     async fillByRole(role: AriaRole, name: string | RegExp, value: string): Promise<void> {
         await this.getByRole(role, name).fill(value);
     }
-
-    async fillByTestId(sendAmountInput: string, s: string) {
-        await this.getByTestId(sendAmountInput).fill(s);
-    }
-    async inputFieldLocator(locator: string, text: string) {
-        let element: Locator;
-
-        if (locator === 'textbox') {
-            element = this.page.getByRole('textbox').last();
-        } else {
-            // Try locating by id, name, or placeholder in order of priority
-            const strategies = [
-                this.page.locator(`[id="${locator}"]`).last(),
-                this.page.locator(`[name="${locator}"]`).last(),
-                this.page.locator(`[placeholder="${locator}"]`).last(),
-            ];
-
-            for (const strategy of strategies) {
-                if (await strategy.isVisible({ timeout: 5000 })) {
-                    element = strategy;
-                    break;
-                }
-            }
-        }
-
-        if (!element) {
-            throw new Error(
-                `inputFieldLocator: No visible element found for locator "${locator}"`
-            );
-        }
-
-        await element.waitFor({ state: 'visible', timeout: 15000 });
-        await element.fill(text,{ timeout: 15000 });
+    async fillInputField(selector: string, text: string): Promise<void> {
+        let targetElement: Locator;
+            const combinedSelector = `[id="${selector}"], [data-testid="${selector}"], [name="${selector}"], [placeholder="${selector}"]`;
+            targetElement = this.page.locator(combinedSelector).last();
+            await targetElement.fill(text);
     }
 
     /** Clicks any element found by role and accessible name. */

@@ -16,7 +16,7 @@ test('Testing transfer money section', async ({ loginPageSession: ui }) => {
     await ui.clickByRole('option', 'Everyday Checking — $' );
 
     // Enter amount and optional memo details
-    await ui.fillByTestId('transfer-amount-input', '500'); // Fills the Amount field ($ 0.00)
+    await ui.fillInputField('transfer-amount-input', '500'); // Fills the Amount field ($ 0.00)
 
     await ui.fillByRole('textbox', 'e.g. Rent, vacation fund…','Moving savings to checking'); // Fills Memo (optional)
 

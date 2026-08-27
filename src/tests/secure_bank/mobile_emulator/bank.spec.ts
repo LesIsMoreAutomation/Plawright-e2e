@@ -1,5 +1,4 @@
 import { test } from '@fixtures/fixtures';
-import { Bank_page } from '@pages/bank_page.';
 import data from "../../../test_data/data.json";
 import {devices} from "@playwright/test";
 
@@ -11,22 +10,47 @@ test.use({
 });
 
 
-test('Send money transactional execution workflow', async ({ page }) => {
-    const bankPage = new Bank_page(page);
+test('Send money transactional execution workflow', async ({ loginPageSession: ui }) => {
 
-    // Verify dashboard landing state
-    await bankPage.verifyDashboardLanding();
+        await ui.expectVisible('heading', 'Welcome back, Alex');
 
-    // Perform the transactional workflow
-    await bankPage.initiateTransfer(data.validData.amount, data.validData.note);
-    await bankPage.verifySummaryAndSubmit(
-        data.validData.accountName,
-        data.validData.payeeName,
-        data.validData.formattedAmount,
-        data.validData.note
-    );
+    /**
+     * Initiates the money transfer workflow.
+     */
+        await ui.clickByRole('link', 'Send Money');
+        await ui.expectVisible('heading', 'Send Money');
 
-    // Confirm completion
-    await bankPage.verifySuccessState();
+        await ui.clickByTestId('send-from-account-select');
+        await ui.clickByRole('option', data.validData.cheque);
+
+        await ui.clickByTestId('payee-select');
+        await ui.clickByRole('option', 'Rahul Sharma — Chase Bank');
+
+        await ui.fillInputField('send-amount-input', data.validData.smallAmount);
+        await ui.fillInputField('send-note', data.validData.note);
+        await ui.clickByTestId('review-send-btn');
+
+
+    /**
+     * Confirms transactional accuracy on the summary screen and submits the form.
+     */
+        await ui.expectVisible('heading', 'Confirm Send Money');
+
+        // Leverages your custom data-testid string containment assertion wrapper
+        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.accountName);
+        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.payeeName);
+        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.smallAmount);
+        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.note);
+
+        await ui.clickByRole('button', 'Confirm & Send');
+
+    /**
+     * Asserts that the transaction completed successfully and elements are visible.
+     */
+        await ui.expectVisible('heading', 'Money Sent Successfully');
+        await ui.expectVisibleByTestId('send-ref-id');
+        await ui.expectVisibleByTestId('send-again-btn');
+        await ui.expectVisibleByTestId('back-to-dashboard-btn');
+
 });
 

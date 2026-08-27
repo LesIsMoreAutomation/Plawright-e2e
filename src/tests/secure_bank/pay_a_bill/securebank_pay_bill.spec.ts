@@ -10,9 +10,9 @@ test('Pay utilities and services @desktop', async ({ loginPageSession: ui }) => 
     await ui.clickByRole('option', 'Metro Water Utility Ref: ACC-');
     await ui.expectVisibleByTestIdtoContainText('biller-selected-summary', 'Metro Water Utility');
     await ui.clickByTestId('bill-amount-input');
-    await ui.fillByTestId('bill-amount-input', data.validData.smallAmount);
+    await ui.fillInputField('bill-amount-input', data.validData.smallAmount);
     await ui.clickByTestId('bill-memo-input');
-    await ui.fillByTestId('bill-memo-input', 'Pay bill');
+    await ui.fillInputField('bill-memo-input', 'Pay bill');
     await ui.clickByTestId('review-bill-btn');
 
     await ui.expectVisibleByTestIdtoContainText('bill-confirm-summary', 'Everyday Checking');

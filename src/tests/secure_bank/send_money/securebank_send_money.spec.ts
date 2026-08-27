@@ -14,9 +14,9 @@ test('Testing send money section', async ({ loginPageSession: ui }) => {
     await ui.clickByRole('option', 'Priya Mehta — Bank of America');
     await ui.expectVisibleByTestIdtoContainText('payee-selected-summary', 'Bank of America');
     await ui.clickByTestId('send-amount-input');
-    await ui.fillByTestId('send-amount-input', data.validData.smallAmount);
+    await ui.fillInputField('send-amount-input', data.validData.smallAmount);
     await ui.clickByTestId('send-note-input');
-    await ui.fillByTestId('send-note-input', 'Car payment');
+    await ui.fillInputField('send-note-input', 'Car payment');
     await ui.clickByTestId('review-send-btn');
 
     await ui.expectVisibleByTestId('send-money-confirm-dialog');
