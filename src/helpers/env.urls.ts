@@ -10,7 +10,7 @@ if (runtimeEnv !== 'qa' && runtimeEnv !== 'int' && runtimeEnv !== 'parabank') {
 }
 
 // Dynamic Application Target Domains
-const playgroundURL = `https://www.${runtimeEnv}://playground.com`;
+const playgroundURL = `https://www.${runtimeEnv}playground.com/bank`;
 const atsURL = `https://${runtimeEnv}.ats.dev.azure.bmw.cloud`;
 
 // FIXED: Consolidated ParaBank target endpoint environment matrix mapping

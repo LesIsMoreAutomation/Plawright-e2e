@@ -39,7 +39,7 @@ export class Login_page {
 
     /** Log into the BMW ATS Platform */
     async atsLogin(username: string, password: string): Promise<void> {
-        await this.navigateToUrl(urls.atsURL);
+        await this.navigateToUrl(urls.parabankURL);
         await this.fillCredentialsAndSubmit(username, password);
     }
 
