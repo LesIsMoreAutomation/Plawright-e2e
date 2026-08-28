@@ -1,15 +1,19 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
+// 1. Load framework behavioral controls
 dotenv.config({ path: path.resolve(process.cwd(), 'env', 'e2e.env') });
+
+// 2. NEW: Force load your isolated credentials mapping file into process.env
+dotenv.config({ path: path.resolve(process.cwd(), 'env', 'cred.env') });
 
 const runtimeEnv = (process.env.ENV ?? 'qa').toLowerCase();
 
-if (runtimeEnv !== 'qa' && runtimeEnv !== 'int' && runtimeEnv !== 'parabank') {
+if (runtimeEnv !== 'qa' && runtimeEnv !== 'int') {
   throw new Error(`Invalid ENV "${runtimeEnv}". Use ENV=qa or ENV=int.`);
 }
 
-// Dynamic Application Target Domains
+// Dynamic Domain Applications Endpoints
 const playgroundURL = `https://www.${runtimeEnv}playground.com/bank`;
 const atsURL = `https://${runtimeEnv}.ats.dev.azure.bmw.cloud`;
 
@@ -42,7 +46,6 @@ if (!['chromium', 'chrome', 'msedge', 'firefox', 'webkit'].includes(browserTarge
   );
 }
 
-// EXPORT ALL DOMAINS CLEANLY: Ready to be consumed by your page objects
 export const urls = {
   playgroundURL,
   atsURL,

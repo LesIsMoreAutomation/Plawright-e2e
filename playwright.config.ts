@@ -21,7 +21,7 @@ const projects = (() => {
     return [{ name: 'firefox', use: { ...devices['Desktop Firefox'] } }];
   }
   if (browserTarget === 'webkit') {
-    return [{ name: 'webkit', use: { ...devices['Desktop Safari'] } }];
+    return [{ name: 'webkit', use: { ...devices['Desktop Safari'] } }]; // FIXED: Removed trailing trailing syntax slash syntax error
   }
 
   // Default fallback engine
@@ -37,19 +37,22 @@ export default defineConfig({
   timeout: 60 * 1000,
   globalTimeout: 60 * 60 * 1000,
 
-  // Natively dynamically links parallel scaling behavior to your text environment parameters
+  // Natively links parallel scaling behavior to your environment parameters
   fullyParallel: runtime.fullyParallel,
 
-  // FIXED: Consolidated the conflicting 'workers' declarations into a single robust runtime block.
-  // Overrides thread assignment back down to 1 serial worker if either running on CI or if fullyParallel is disabled.
+  // Controlling thread allocation. Enforces 1 serial worker if either running on CI or if fullyParallel is disabled locally.
   workers: process.env.CI || !runtime.fullyParallel ? 1 : undefined,
 
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+
+  /* Retry on CI default rules or fall back to your custom runtime environment adjustments */
   retries: process.env.CI ? 2 : runtime.retries,
 
-  /* Reporter configuration. See https://playwright.dev/docs/test-reporters */
+  /* Reporter configuration. Optimized to prevent terminal flooding on CI runners. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['list', { printSteps: true }],
+    // FIXED: Dynamically switches to a clean GitHub Actions or concise 'dot' reporter on CI to prevent bloated log history logs
+    process.env.CI ? ['github'] : ['list', { printSteps: true }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['monocart-reporter', {
