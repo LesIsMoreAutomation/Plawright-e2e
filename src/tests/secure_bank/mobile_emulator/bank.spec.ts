@@ -2,15 +2,14 @@ import { test } from '@fixtures/fixtures';
 import data from "../../../test_data/data.json";
 import {devices} from "@playwright/test";
 
-// Playwright will execute this exact test 3 times automatically
-// (once for iPhone, once for Android, once for MatePad)
+
 test.use({
     ...devices[`Pixel 7`],
     browserName: 'chromium',
 });
 
 
-test('Send money transactional execution workflow', async ({ loginPageSession: ui }) => {
+test('Send money transactional execution workflow', async ({ playgroundSession: ui }) => {
 
         await ui.expectVisible('heading', 'Welcome back, Alex');
 
@@ -37,10 +36,10 @@ test('Send money transactional execution workflow', async ({ loginPageSession: u
         await ui.expectVisible('heading', 'Confirm Send Money');
 
         // Leverages your custom data-testid string containment assertion wrapper
-        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.accountName);
-        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.payeeName);
-        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.smallAmount);
-        await ui.expectVisibleByTestIdtoContainText('send-confirm-summary', data.validData.note);
+        await ui.expectVisibleByTestIdToContainText('send-confirm-summary', data.validData.accountName);
+        await ui.expectVisibleByTestIdToContainText('send-confirm-summary', data.validData.payeeName);
+        await ui.expectVisibleByTestIdToContainText('send-confirm-summary', data.validData.smallAmount);
+        await ui.expectVisibleByTestIdToContainText('send-confirm-summary', data.validData.note);
 
         await ui.clickByRole('button', 'Confirm & Send');
 

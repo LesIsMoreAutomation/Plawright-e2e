@@ -1,59 +1,33 @@
-import {Page, Locator, expect} from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 type AriaRole = Parameters<Page['getByRole']>[0];
 
 export class Base_page {
-    constructor(private readonly page: Page) {}
+    // Making it protected allows inheriting page objects to access 'this.page' directly for edge-case scripts
+    constructor(protected readonly page: Page) {}
 
-    // ── Locator factory ──────────────────────────────────────────────────────
+    // ── Actions & Shared Inputs ──────────────────────────────────────────────
 
-    /** Returns a locator for any ARIA role + accessible name. */
-    getByRole(role: AriaRole, name: string | RegExp): Locator {
-        return this.page.getByRole(role, { name });
-    }
-
-    /** Returns a locator by data-testid. */
-    getByTestId(testId: string): Locator {
-        return this.page.getByTestId(testId);
-    }
-    getByPlaceholder(testId: string): Locator {
-        return this.page.getByPlaceholder(testId);
-    }
-    getByLabel(testId: string): Locator {
-        return this.page.getByLabel(testId);
-
-    }
-
-    // ── Actions ──────────────────────────────────────────────────────────────
-
-    /** Fills a text input / textarea found by role and accessible name. */
-    async fillByRole(role: AriaRole, name: string | RegExp, value: string): Promise<void> {
-        await this.getByRole(role, name).fill(value);
-    }
+    /**
+     * Highly reusable input-filler that matches across multiple strategic attributes instantly.
+     */
     async fillInputField(selector: string, text: string): Promise<void> {
-        let targetElement: Locator;
-            const combinedSelector = `[id="${selector}"], [data-testid="${selector}"], [name="${selector}"], [placeholder="${selector}"]`;
-            targetElement = this.page.locator(combinedSelector).last();
-            await targetElement.fill(text);
+        const combinedSelector = `[id="${selector}"], [data-testid="${selector}"], [name="${selector}"], [placeholder="${selector}"]`;
+        await this.page.locator(combinedSelector).last().fill(text);
     }
 
-    /** Clicks any element found by role and accessible name. */
-    async clickByRole(role: AriaRole, name: string | RegExp): Promise<void> {
-        await this.getByRole(role, name).last().click();
-    }
-
-    /** Clicks an element by data-testid. */
     async clickByTestId(testId: string): Promise<void> {
-        await this.getByTestId(testId).click();
+        await this.getByTestId(testId).last().click();
     }
 
-    public async elementSelectorAndClick(selector: string) {
-        await this.page.locator(selector).last().click({
-            force: true,});
-    }
+    getByTestId(testId: string): Locator { return this.page.getByTestId(testId); }
 
-    public async clickIcon(value: string): Promise<void> {
-        const selectors = [
+
+    /**
+     * Optimised Icon Clicker. Uses standard CSS grouping to prevent slow sequential 'isVisible' loops.
+     */
+    async clickIcon(value: string): Promise<void> {
+        const structuralSelectors = [
             `dsmp-widget-store [data-id="${value}"]`,
             `[class="panel-layout"] [role="button"] [data-id="${value}"]`,
             `[disclosureicon="${value}"]`,
@@ -61,145 +35,121 @@ export class Base_page {
             `[role="button"] [data-id="${value}"]`,
             `[role="gridcell"] [data-id="${value}"]`,
             `[icon="${value}"]`,
-            `[data-id="${value}"]` // fallback
+            `[data-id="${value}"]`
         ];
 
-        const timeout = 2000;
-
-        // Try each selector in order until one is found
-        for (const selector of selectors) {
-            try {
-                const locator = this.page.locator(selector).last();
-
-                // Check visibility with timeout only for non-fallback selectors
-                const isVisible = await locator.isVisible({
-                    timeout: selector === selectors[selectors.length - 1] ? 0 : timeout
-                });
-
-                if (isVisible) {
-                    await this.elementSelectorAndClick(selector);
-                    return;
-                }
-            } catch (error) {
-            }
-        }
-        await this.elementSelectorAndClick(selectors[selectors.length - 1]);
+        // Combines selectors with commas so the browser parses them all instantly in parallel
+        const groupedSelector = structuralSelectors.join(', ');
+        await this.page.locator(groupedSelector).last().click({ force: true });
     }
 
-    /** Asserts that an element found by data-testid is visible. */
-    async expectVisibleByTestId(testId: string): Promise<void> {
-        await this.getByTestId(testId).waitFor({ state: 'visible' });
+    /** Fills a text input / textarea found by role and accessible name. */
+    async fillByRole(role: AriaRole, name: string | RegExp, value: string): Promise<void> {
+        const locator = this.page.getByRole(role, { name });
+        await locator.clear();
+        await locator.fill(value);
     }
 
-    /** Asserts that an element found by data-testid is hidden / not present. */
-    async expectHiddenByTestId(testId: string): Promise<void> {
-        await this.getByTestId(testId).waitFor({ state: 'hidden' });
+    async pressKeyboardAction(key: string): Promise<void> {
+        await this.page.keyboard.press(key);
+    }
+    async keyboardTypeText(text: string): Promise<void> {
+        await this.page.keyboard.type(text);
+    }
+    public async elementSelectorAndClick(selector: string) {
+        await this.page.locator(selector).last().click({
+            force: true,});
     }
 
-    /** Returns the inner text of an element found by data-testid. */
-    async getTextByTestId(testId: string): Promise<string> {
-        return this.getByTestId(testId).innerText();
+    /** Clicks any element found by role and accessible name. */
+    async clickByRole(role: AriaRole, name: string | RegExp): Promise<void> {
+        await this.page.getByRole(role, { name }).last().click();
     }
 
-    /** Types into an element character by character (useful for autocomplete). */
+    /** Types into an element character by character (useful for autocomplete fields). */
     async typeByRole(role: AriaRole, name: string | RegExp, value: string): Promise<void> {
-        await this.getByRole(role, name).pressSequentially(value);
+        await this.page.getByRole(role, { name }).pressSequentially(value);
     }
+
 
     /** Selects an option inside a <select> element found by role and name. */
     async selectByRole(role: AriaRole, name: string | RegExp, option: string): Promise<void> {
-        await this.getByRole(role, name).selectOption(option);
+        await this.page.getByRole(role, { name }).selectOption(option);
+    }
+    async selectOption(locator: string, option: string): Promise<void> {
+        await this.page.locator(locator).selectOption(option);
     }
 
     /** Checks or unchecks a checkbox / radio found by role and accessible name. */
-    async setCheckedByRole(
-        role: AriaRole,
-        name: string | RegExp,
-        checked: boolean
-    ): Promise<void> {
-        const locator = this.getByRole(role, name);
+    async setCheckedByRole(role: AriaRole, name: string | RegExp, checked: boolean): Promise<void> {
+        const locator = this.page.getByRole(role, { name });
         checked ? await locator.check() : await locator.uncheck();
     }
 
-    /** Clears the value of an input found by role and accessible name. */
-    async clearByRole(role: AriaRole, name: string | RegExp): Promise<void> {
-        await this.getByRole(role, name).clear();
+    /**
+     * Asserts whether a radio button or checkbox found by role and name is checked.
+     * @param role - The ARIA role (e.g., 'radio', 'checkbox')
+     * @param name - The accessible text or layout name of the element
+     * @param checked - The expected state (defaults to true)
+     */
+    async expectRoleToBeChecked(
+        role: AriaRole,
+        name: string | RegExp,
+        checked: boolean = true
+    ): Promise<void> {
+        const locator = this.page.getByRole(role, { name });
+        if (checked) {
+            await expect(locator).toBeChecked();
+        } else {
+            await expect(locator).not.toBeChecked();
+        }
     }
 
-    // ── Assertions ───────────────────────────────────────────────────────────
 
-    /** Asserts that an element found by role and name is visible. */
+    // ── Assertions (Web-First Web Drivers) ──────────────────────────────────
+
+    /** Asserts that an element found by role and name is visible with clean failure logging. */
     async expectVisible(role: AriaRole, name: string | RegExp): Promise<void> {
-        await this.getByRole(role, name).waitFor({ state: 'visible' });
+        await expect(this.page.getByRole(role, { name })).toBeVisible();
     }
 
     /** Asserts that an element found by role and name is hidden / not present. */
     async expectHidden(role: AriaRole, name: string | RegExp): Promise<void> {
-        await this.getByRole(role, name).waitFor({ state: 'hidden' });
+        await expect(this.page.getByRole(role, { name })).toBeHidden();
     }
 
-    /** Returns the inner text of an element found by role and accessible name. */
-    async getTextByRole(role: AriaRole, name: string | RegExp): Promise<string> {
-        return this.getByRole(role, name).innerText();
+    /** Asserts that an element found by data-testid is visible. */
+    async expectVisibleByTestId(testId: string): Promise<void> {
+        await expect(this.page.getByTestId(testId)).toBeVisible();
     }
 
-
-    async expectVisibleByTestIdtoContainText(assertion : string, text: string) {
-        await expect(this.getByTestId(assertion)).toContainText(text);
-
-   }
-
-   async expectTextToVisible(assertion: string) {
-        await expect(this.page.getByText(assertion,{exact: true})).toBeVisible();
+    /** Asserts that an element found by data-testid is hidden / not present. */
+    async expectHiddenByTestId(testId: string): Promise<void> {
+        await expect(this.page.getByTestId(testId)).toBeHidden();
     }
 
-    private getTodayAsCompactDate(): string {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-
-        return `${year}${month}${day}`;
+    /** Asserts that an element found by test ID contains a specific substring. */
+    async expectVisibleByTestIdToContainText(testId: string, text: string): Promise<void> {
+        await expect(this.page.getByTestId(testId)).toContainText(text);
     }
 
-    private getTodayAsDashedDate(): string {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-
-        return `${year}-${month}-${day}`;
+    /** Asserts that an exact text string is visible anywhere on screen. */
+    async expectTextToBeVisible(text: string): Promise<void> {
+        await expect(this.page.getByText(text, { exact: true })).toBeVisible();
     }
 
-    private getTodayAsUsShortDate(): string {
-        return new Intl.DateTimeFormat('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        }).format(new Date());
-    }
-
-    private escapeRegExp(value: string): string {
-        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
+    /** Dynamically validates that a reference label contains today's current date format layout. */
     async assertRefNumberContainsTodayDate(refIdLocator: Locator): Promise<void> {
-        const todayDate = this.getTodayAsCompactDate();
-        const todayDashedDate = this.getTodayAsDashedDate();
-        const todayUsShortDate = this.getTodayAsUsShortDate();
+        const today = new Date();
 
-        // Accept YYYYMMDD, YYYY-MM-DD, and UI month-name format (e.g., "Aug 24, 2026").
-        const acceptedDatePattern = [todayDate, todayDashedDate, todayUsShortDate]
-            .map((dateText) => this.escapeRegExp(dateText))
+        const compactDate = today.toISOString().split('T')[0].replace(/-/g, ''); // YYYYMMDD
+        const dashedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const usShortDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(today); // e.g. "Aug 27, 2026"
+
+        const acceptedDatePattern = [compactDate, dashedDate, usShortDate]
+            .map((dateText) => dateText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
             .join('|');
 
         await expect(refIdLocator).toContainText(new RegExp(`(?:${acceptedDatePattern})`));
-    }
-     async keyboardPress(key: string) {
-        await this.page.keyboard.press(key);
-    }
-
-     async keyboardType(key: string) {
-        await this.page.keyboard.type(key);
     }
 }

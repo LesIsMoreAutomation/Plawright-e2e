@@ -1,14 +1,14 @@
 import { test, expect } from '@fixtures/fixtures';
-// Import the test data directly from the new data layer
-import data from '../../../test_data/data.json'
+import data from "@test-data/data.json";
+
 
 test.describe('SecureBank - Apply Loan', () => {
 
-    test('TC07 - Loan dialog shows required fields and actions', async ({ loginPageSession: ui }) => {
+    test('TC07 - Loan dialog shows required fields and actions', async ({ playgroundSession: ui }) => {
         // Reference our static JSON dataset directly
 
         // Open the Loan Dialog
-        await ui.clickByTestId('quick-action-apply-loan');
+        await ui.getByTestId('quick-action-apply-loan').click();
         await ui.expectVisible('heading', 'Apply for a Loan');
 
         // Fill out Loan Details Form using data file
@@ -20,7 +20,6 @@ test.describe('SecureBank - Apply Loan', () => {
         await ui.clickByRole('combobox', 'Term Length');
         await ui.clickByRole('option', data.validData.term);
 
-        await ui.clearByRole('spinbutton', 'Interest Rate (%)');
         await ui.fillByRole('spinbutton', 'Interest Rate (%)', data.validData.rate);
 
         await ui.clickByRole('combobox', 'Disbursement Account');

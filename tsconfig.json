@@ -10,7 +10,7 @@
     /* Path Mapping Setup */
     "baseUrl": ".",                          /* Root directory of your project */
     "paths": {
-      "@test-data/*": ["src/test-data/*"],   /* Maps the data directory alias */
+      "@test-data/*": ["src/test_data/*"],   /* Maps the data directory alias */
       "@fixtures/*": ["src/fixtures/*"],
       "@helpers/*": ["src/helpers/*"],
       "@pages/*": ["src/pages/*"]
